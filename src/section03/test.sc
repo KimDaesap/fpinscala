@@ -17,8 +17,7 @@ Practice.dropWhile(List(1,2,3,4,5), (x: Int) => {x < 2})
 Practice.init(List(1,2,3,4,5))
 
 List.foldRight(List(1,2,3), 0) (_ + _)
-
 List.foldRight(List(1,2,3), 1.0) (_ * _)
-
 List.product2(List(1,2,3,0,4,5))
-
+List.foldRight(List(1,2,3), Nil: List[Int]) (Cons(_,_))
+Practice.length(List(2,3,4,5))

@@ -30,7 +30,7 @@ object List {
 	// 49 page, 목록 3-2.
 	def foldRight[A,B](as: List[A], z: B)(f: (A,B) => B): B = as match {
 		case Nil => println(Nil); z
-		case Cons(x, xs) => println(s"$x"); f(x, foldRight(xs, z)(f))
+		case Cons(x, xs) => println(s"$x, $xs"); f(x, foldRight(xs, z)(f))
 	}
 
 	def sum2(ns: List[Int]) = foldRight(ns, 0)((x,y) => x + y)

@@ -51,10 +51,20 @@ object Practice {
 	// 평가단축은 목록이 { 1, 2, 3, 4, 5 } 일 경우  1 * ( 2 * ( 3 * (4 * (5 * 1) ) -> 1 * 120
 
 	// Practice 3-8.
+	// 결과는 Cons(1, Cons(2, Cons(3, Nil)))
+	// 결론적으로 List의 생성자가 동작하는 방식과 동일한 방식으로 동작한다.
 
 	// Practice 3-9.
+	// ?_? acc가 어떻게 동작하는지 잘 모르겠음. 연구중.
+	def length[A](as: List[A]): Int = {
+		List.foldRight(as, 0) ((_, acc) => acc + 1)
+	}
 
 	// Practice 3-10.
+	def foldLeft[A,B](as: List[A], z: B) (f: (B, A) => B): B = {
+		
+	}
+
 
 	// Practice 3-11.
 
