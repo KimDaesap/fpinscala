@@ -61,8 +61,10 @@ object Practice {
 	}
 
 	// Practice 3-10.
-	def foldLeft[A,B](as: List[A], z: B) (f: (B, A) => B): B = {
-		
+	def foldLeft[A,B](as: List[A], z: B) (f: (B, A) => B): B = as match {
+		case Nil => z
+		case Cons(x, xs) => f(foldLeft(xs, x)(f), z)
+
 	}
 
 
