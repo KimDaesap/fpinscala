@@ -34,19 +34,6 @@ object Practice {
 	}
 
 	// Practice 3-5.
-	// 문제 표현이 애매함. 조건이 불일치할 때 까지 요소를 제거 하는 것임.
-
-	/* 이 것은 조건이 일치하는 모든 요소 제거.
-	def dropWhile[A](l: List[A], f: A => Boolean): List[A] = {
-		def go(l: List[A], acc: List[A]): List[A] = l match {
-			case Nil => acc
-			case Cons(x, xs) => if (f(x)) go(xs, acc) else go(xs, Cons(x, acc))
-		}
-
-		go(l, Nil)
-	}
-	*/
-
 	def dropWhile[A](l: List[A], f: A => Boolean): List[A] = l match {
 		case Cons(x, xs) if f(x) => dropWhile(xs, f)
 		case _ => l
@@ -58,6 +45,26 @@ object Practice {
 		case Cons(_, Nil) => Nil
 		case Cons(x, xs) => Cons(x, init(xs))
 	}
+
+	// Practice 3-7.
+	// 재귀를 멈추지 않는다. 이유는 재귀를 멈추는 조건이 오로지 값이 Nil일 때만이기 때문.
+	// 평가단축은 목록이 { 1, 2, 3, 4, 5 } 일 경우  1 * ( 2 * ( 3 * (4 * (5 * 1) ) -> 1 * 120
+
+	// Practice 3-8.
+
+	// Practice 3-9.
+
+	// Practice 3-10.
+
+	// Practice 3-11.
+
+	// Practice 3-12.
+
+	// Practice 3-13.
+
+	// Practice 3-14.
+
+	// Practice 3-15.
 
 
 
