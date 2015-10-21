@@ -27,10 +27,15 @@ object List {
 		case Cons(h,t) => Cons(h, append(t, a2))
 	}
 
-	// 49 page, 목록 3-2.
+	/* 49 page, 목록 3-2.
+		ex> foldRight(List(1,2,3), 0) ((x,y) => x + y)
+		* 우측부터 역순으로 연산.
+		Cons(1, Cons(2, Cons(3, Nil)))
+		f(1, f(2, f(3, 0))) -> (1 + (2 + (3 + 0))) = 6
+	*/
 	def foldRight[A,B](as: List[A], z: B)(f: (A,B) => B): B = as match {
-		case Nil => println(Nil); z
-		case Cons(x, xs) => println(s"$x, $xs"); f(x, foldRight(xs, z)(f))
+		case Nil => z
+		case Cons(x, xs) => f(x, foldRight(xs, z)(f))
 	}
 
 	def sum2(ns: List[Int]) = foldRight(ns, 0)((x,y) => x + y)
