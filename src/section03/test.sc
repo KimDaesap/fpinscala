@@ -4,22 +4,22 @@ List(1,2,3)
 Cons(1, List(2,3,4))
 List.sum(List(1,2,3))
 
-Practice.x
+List.tail((List(1,2,3)))
 
-Practice.tail((List(1,2,3)))
+List.setHead(5, List(1,2,3,4))
 
-Practice.setHead(5, List(1,2,3,4))
+List.drop(List(1,2,3,4,5), 3)
 
-Practice.drop(List(1,2,3,4,5), 3)
+List.dropWhile(List(1,2,3,4,5), (x: Int) => {x < 2})
 
-Practice.dropWhile(List(1,2,3,4,5), (x: Int) => {x < 2})
-
-Practice.init(List(1,2,3,4,5))
+List.init(List(1,2,3,4,5))
 
 List.foldRight(List(1,2,3), 0) (_ + _)
 List.foldRight(List(1,2,3), 1.0) (_ * _)
 List.product2(List(1,2,3,0,4,5))
 List.foldRight(List(1,2,3), Nil: List[Int]) (Cons(_,_))
-Practice.length(List(2,3,4,5))
+List.length(List(2,3,4,5))
 List.foldRight(List(1,2,3,4,5), 0) ((x,y) => x + y)
-Practice.foldLeft(List(1,2,3,4,5), 0) ((x,y) => x + y)
+List.foldLeft(List(1,2,3,4,5), 0) ((x,y) => x + y)
+
+List.filterViaFlatMap(List(1,2,3,4,5))(a => a > 3)
