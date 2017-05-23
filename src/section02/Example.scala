@@ -1,8 +1,5 @@
 package section02
 
-/**
- * Created by WillSmDaesap on 2015-10-02.
- */
 object Example {
 
 	def factorial(n: Int): Int = {
