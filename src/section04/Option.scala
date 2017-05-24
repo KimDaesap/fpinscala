@@ -18,3 +18,7 @@ sealed trait Option[+A] {
 
 case class Some[+A] extends Option[A]
 case class None extends Option[Nothing]
+
+object Option {
+
+}
