@@ -1,8 +1,8 @@
 package section02
 
-object Practice {
+object Exercise {
 
-	// Practice 2-1.
+	// EXERCISE 2-1.
 	def fibonacci(n: Int): Int = {
 		def go(n: Int, acc: Int): Int =
 			if (n <= 0) acc
@@ -11,7 +11,7 @@ object Practice {
 		go(n, 0)
 	}
 
-	// Practice 2-2.
+	// EXERCISE 2-2.
 	def isSorted[A](as: Array[A], ordered: (A,A) => Boolean): Boolean = {
 		@annotation.tailrec
 		def go(n: Int): Boolean = {
@@ -23,17 +23,17 @@ object Practice {
 		go(0)
 	}
 
-	// Practice 2-3.
+	// EXERCISE 2-3.
 	def curry[A,B,C](f: (A,B) => C): A => B => C = {
 		a => b => f(a,b)
 	}
 
-	// Practice 2-4.
+	// EXERCISE 2-4.
 	def uncurry[A,B,C](f: A => B => C): (A,B) => C = {
 		(a,b) => f(a)(b)
 	}
 
-	// Practice 2-5.
+	// EXERCISE 2-5.
 	def compose[A,B,C](f: B => C, g: A => B): A => C = {
 		a => f(g(a))
 	}
