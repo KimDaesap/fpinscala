@@ -98,11 +98,18 @@ object Option {
 
   /* EXERCISE 4-5 */
   // 목록 a를 한 번만 훑는 구현을 할 것!
+  // 위에서 구현한 map2를 사용하면 다음과 같다.
+  //   case h::t => map2(f(h), traverse(t)(f))(_ :: _)
   def traverse[A,B](a: List[A])(f: A => Option[B]): Option[List[B]] = {
     a match {
       case Nil => Some(Nil)
       case h :: t => f(h).flatMap(v => traverse(t)(f).map(v :: _))
     }
+  }
+
+  // sequence를 traverse로 구현해 보라.
+  def sequence2[A](a: List[Option[A]]): Option[List[A]] = {
+    traverse(a)(v => v)
   }
 
   /* EXERCISE 4-6 */
