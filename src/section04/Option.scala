@@ -112,8 +112,4 @@ object Option {
     traverse(a)(v => v)
   }
 
-  /* EXERCISE 4-6 */
-
-
-
 }
