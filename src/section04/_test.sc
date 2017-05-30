@@ -25,14 +25,6 @@ a.flatMap(aa => b.map(bb => f(aa, bb)))
 
 Option.map2(Some(1), Some(2))(f)
 
+Option.sequence(List(Some(1), Some(2), Some(3)))
 
-def sequence[A](a: List[Option[A]]): Option[List[A]] = {
-  a match {
-    case h:: t => h.flatMap(v => sequence(t).map(v :: _))
-    case Nil => println("Nil"); Some(Nil)
-  }
-}
-
-sequence(List(Some(1), Some(2), Some(3)))
-
-//Some(1).flatMap(v => Some(v))
+Option.traverse(List("1", "2", "3" , "4", "5"))(x => Option.Try(x.toInt))

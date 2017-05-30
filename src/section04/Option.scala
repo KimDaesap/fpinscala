@@ -98,10 +98,14 @@ object Option {
 
   /* EXERCISE 4-5 */
   // 목록 a를 한 번만 훑는 구현을 할 것!
-  def traverse[A,B](a: List[A])(f: A = Option[B]): Option[List[B]] = {
-
-    ???
+  def traverse[A,B](a: List[A])(f: A => Option[B]): Option[List[B]] = {
+    a match {
+      case Nil => Some(Nil)
+      case h :: t => f(h).flatMap(v => traverse(t)(f).map(v :: _))
+    }
   }
+
+  /* EXERCISE 4-6 */
 
 
 
