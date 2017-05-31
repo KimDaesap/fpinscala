@@ -28,3 +28,14 @@ Option.map2(Some(1), Some(2))(f)
 Option.sequence(List(Some(1), Some(2), Some(3)))
 
 Option.traverse(List("1", "2", "3" , "4", "5"))(x => Option.Try(x.toInt))
+
+val eigherA = Right(10)
+val eigherB = Right(5)
+val eigherC = Left("I am C")
+
+eigherA.flatMap(x => Right(x * 10))
+eigherA.map2(Right("I am B"))((a,b) => Left("I am Right"))
+eigherB.map2(eigherA)((a,b) => Left("I am Right"))
+eigherB.map2(eigherC)((a,b) => Left("I am Right"))
+
+
