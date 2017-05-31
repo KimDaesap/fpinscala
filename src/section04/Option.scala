@@ -54,7 +54,8 @@ object Option {
     // 2. Seq의 요소 x에 대한 match.pow(x - m, 2) 값들의 Seq를 구한다.
     // 3. 2번에서 구한 Seq의 평균 값을 구한다.
 
-    // note: flatMap을 사용하면 average 함수의 리턴 값을 직접 매핑해서 간결하게 표현할 수 있다.
+    // note: flatMap을 사용하면 average 함수의 리턴 값을 직접 매핑해서
+    //       간결하게 표현할 수 있다.
     average(xs).flatMap(m => average(xs.map(x => math.pow(x - m, 2))))
   }
 
@@ -79,8 +80,8 @@ object Option {
   // h.flatMap(v => Option(...)) 가 되고 t에 대해 sequence(t)의 결과 값에 cons를
   // map 하는 함수를 넘기는 방식으로 재귀를 돌면 해결.
   // foldRight 방식으로 마지막 값부터 접는 방식으로 생각해야 이해가 쉽다.
-  // a가 Nil인 경우 None을 넘기면 재귀가 중단 되는데 h.flatMap 할 때 Option이 벗겨지고
-  // 나온 값 v에 대해 cons를 하므로 Some(Nil)을 넘겨주면 자연스럽게 List로 연결됨.
+  // a가 Nil인 경우 None을 넘기면 재귀가 중단 되는데 h.flatMap 할 때 Option을 벗긴
+  // 값 v에 대해 cons를 하므로 Some(Nil)을 넘겨주면 자연스럽게 List로 연결됨.
   // 좀 더 알기 쉽게 이해할 수 있는 방법을 생각해 봅시다.
   def sequence[A](a: List[Option[A]]): Option[List[A]] = {
     a match {
