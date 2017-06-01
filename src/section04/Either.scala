@@ -22,20 +22,42 @@ sealed trait Either[+E, +A] {
     this.flatMap(aa => b.map(bb => f(aa,bb)))
 }
 
+
 case class Left[+E](value: E) extends Either[E, Nothing]
 case class Right[+A](value: A) extends  Either[Nothing, A]
+
 
 object Eigher {
   /* EXERCISE 4-7 */
   // Either에 대한 sequence와 traverse를 작성하라.
   // 이 두 함수는 발생한 첫 오류를 돌려주어야 한다 (오류가 발생했다면)
-  def sequence[E, A](es: List[Either[E, A]]): Either[E, List[A]] = {
-    ???
+  def sequence[E, A](es: List[Either[E, A]]): Either[E, List[A]] = es match {
+    case Nil => Right(Nil)
+    case h :: t => h.flatMap(v => sequence(t).map(v :: _))
   }
 
   def traverse[E, A, B](as: List[A])(f: A => Either[E, B]): Either[E, List[B]] = {
-    ???
+    as match {
+      case Nil => Right(Nil)
+      case h  :: t => f(h).flatMap(v => traverse(t)(f).map(v :: _))
+    }
   }
+
+  // page 78.
+  sealed class Name(val value: String)
+  sealed class Age(val value: Int)
+  case class Person(name: Name, age: Age)
+
+  def mkName(name: String): Either[String, Name] =
+    if (name == "" || name == null) Left("Name is empty.")
+    else Right(new Name(name))
+
+  def mkAge(age: Int): Either[String, Age] =
+    if (age < 0) Left("Age is out of range.")
+    else Right(new Age(age))
+
+  def mkPerson(name: String, age: Int): Either[String, Person] =
+    mkName(name).map2(mkAge(age))(Person(_, _))
 
   /* EXERCISE 4-8 */
   // map2는 오류를 하나만 보고할 수 있다. 두 오류를 모두 보고하게 하려면 어떻게 해야할까?
