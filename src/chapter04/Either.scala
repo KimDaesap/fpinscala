@@ -1,4 +1,4 @@
-package section04
+package chapter04
 
 sealed trait Either[+E, +A] {
   /* EXERCISE 4-6 */
@@ -84,11 +84,11 @@ object Either {
   }
 
   // 2. mkPerson의 서명을 바꿔보자...
-  def mkPerson1(name: String, age: Int): Either[List[String], Person] = {
+  def mkPerson_2(name: String, age: Int): Either[List[String], Person] = {
     map2(mkName(name), mkAge(age))(Person(_, _))
   }
-
-  // 3. Either보다 더 잘 만족하는 새로운 자료형식을 만들어 보자.
-
-
 }
+
+// 3. Either보다 더 잘 만족하는 새로운 자료형식을 만들어 보자.
+// Todo....
+

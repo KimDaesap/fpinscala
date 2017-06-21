@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://$PROJECT_DIR$/src/section02/Example.scala" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/section02/Practice.scala" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/section03/List.scala" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/section03/_test.sc" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/chapter02/Example.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/chapter02/Practice.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/chapter03/List.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/chapter03/test03.sc" charset="UTF-8" />
   </component>
 </project>

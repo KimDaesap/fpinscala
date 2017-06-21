@@ -1,4 +1,4 @@
-import section02._
+import chapter02._
 
 // example.
 Example.factorial(1)

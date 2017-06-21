@@ -1,4 +1,4 @@
-import section03._
+import chapter03._
 
 // List
 List(1,2,3)
