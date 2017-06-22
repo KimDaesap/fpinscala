@@ -38,6 +38,41 @@ sealed trait Stream[+A] {
     case _ => Empty
   }
 
+  // page 90
+  def exists(p: A=>Boolean): Boolean = this match {
+    case Cons(h, t) => p(h()) || t().exists(p)
+    case _ => false
+  }
+
+  // f의 두번 째 인자 =>B는 함수(비엄격)이기 때문에 평가가 필요하지 않은 상황에서
+  // 순회를 중단하게 된다. 엄격한 List의 foldRight와의 차이점이다.
+  //   e.g) foldRight(false) ((a,b) => p(a) || b)
+  def foldRight[B](z: =>B)(f: (A, =>B) => B): B = this match {
+    case Cons(h, t) => f(h(), t().foldRight(z)(f))
+    case _ => z
+  }
+
+  /* EXERCISE 5-4 */
+  def forAll(p: A=>Boolean): Boolean = ???
+
+  /* EXERCISE 5-5 */
+  // foldRight를 이용해서 takeWhile을 구현하라.
+  def takeWhile2(p: A=>Boolean): Stream[A] = ???
+
+  /* EXERCISE 5-6 */
+  // foldRight를 이용해서 headOption을 구현하라.
+  def headOption2: Option[A] = ???
+
+  /* EXERCISE 5-7 */
+  // foldRight를 이용해서 map, filter, append, flatMap을 구현하라.
+  def map[B](f: A=>B): Stream[B] = ???
+
+  def filter(p: A=>Boolean): Stream[A] = ???
+
+  def append[B>:A](as: Stream[B]): Stream[B] = ???
+
+  def flatMap[B](f: A=>Stream[B]): Stream[B] = ???
+
 }
 
 
