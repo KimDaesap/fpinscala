@@ -13,14 +13,14 @@ sealed trait Stream[+A] {
   }
 
   /* EXERCISE 5-1 */
-  // toList 함수를 작성하라
+  // toList 함수를 작성하라.
   def toList: List[A] = this match {
     case Empty => Nil
     case Cons(h, t) => h() :: t().toList
   }
 
   /* EXERCISE 5-2 */
-  // take(n)과 drop(n) 함수를 작성하라
+  // take(n)과 drop(n) 함수를 작성하라.
   def take(n: Int): Stream[A] = this match {
     case Cons(h, t) if n > 0 => Cons(h, () => t().take(n - 1))
     case _ => Empty
@@ -38,41 +38,52 @@ sealed trait Stream[+A] {
     case _ => Empty
   }
 
-  // page 90
+  // page 90-1
   def exists(p: A=>Boolean): Boolean = this match {
     case Cons(h, t) => p(h()) || t().exists(p)
     case _ => false
   }
 
+  // page 90-2
   // f의 두번 째 인자 =>B는 함수(비엄격)이기 때문에 평가가 필요하지 않은 상황에서
   // 순회를 중단하게 된다. 엄격한 List의 foldRight와의 차이점이다.
   //   e.g) foldRight(false) ((a,b) => p(a) || b)
-  def foldRight[B](z: =>B)(f: (A, =>B) => B): B = this match {
+  def foldRight[B](z: => B)(f: (A, => B) => B): B = this match {
     case Cons(h, t) => f(h(), t().foldRight(z)(f))
     case _ => z
   }
 
   /* EXERCISE 5-4 */
-  def forAll(p: A=>Boolean): Boolean = ???
+  def forAll(p: A => Boolean): Boolean = this match {
+    case Cons(h, t) => p(h()) && t().forAll(p)
+    case _ => true
+  }
 
   /* EXERCISE 5-5 */
   // foldRight를 이용해서 takeWhile을 구현하라.
-  def takeWhile2(p: A=>Boolean): Stream[A] = ???
+  def takeWhile2(p: A => Boolean): Stream[A] =
+    this.foldRight(Stream.empty[A])((a, acc) => if (p(a)) Cons(() => a, () => acc) else Empty)
 
   /* EXERCISE 5-6 */
   // foldRight를 이용해서 headOption을 구현하라.
-  def headOption2: Option[A] = ???
+  def headOption2: Option[A] =
+    this.foldRight(None: Option[A])((a, acc) => Some(a))
 
   /* EXERCISE 5-7 */
   // foldRight를 이용해서 map, filter, append, flatMap을 구현하라.
-  def map[B](f: A=>B): Stream[B] = ???
+  def map[B](f: A => B): Stream[B] =
+    this.foldRight(Stream.empty[B])((a, acc) => Cons(() => f(a), () => acc))
 
-  def filter(p: A=>Boolean): Stream[A] = ???
+  def filter(p: A=>Boolean): Stream[A] =
+    this.foldRight(Stream.empty[A])((a, acc) => if (p(a)) Cons(() => a, () => acc) else acc)
 
-  def append[B>:A](as: Stream[B]): Stream[B] = ???
+  // 왜 인자 b의 타입 B는 반공변으로 선언해야 동작하는가?!
+  //   참고) http://www.bench87.com/content/32 (프로그래밍 스칼라 10.1.1~2)
+  def append[B >: A](b: Stream[B]): Stream[B] =
+    this.foldRight(b)((a, acc) => Cons(() => a, () => acc))
 
-  def flatMap[B](f: A=>Stream[B]): Stream[B] = ???
-
+  def flatMap[B](f: A => Stream[B]): Stream[B] =
+    this.foldRight(Stream.empty[B]) ((a, acc) => f(a).append(acc))
 }
 
 
@@ -89,6 +100,7 @@ object Stream {
   }
 
   // 빈 Stream은 Empty로 표현가능하지만 타입추론이 필요한 경우에는 이 함수를 사용한다.
+  //   e.g) Stream.empty[A]
   def empty[A]: Stream[A] = Empty
 
   // _*: Seq 타입의 와일드 카드, List의 tail 등의 타입을 표현.
@@ -100,5 +112,31 @@ object Stream {
     if (as.isEmpty) empty
     else cons(as.head, apply(as.tail: _*))
   }
+
+  /* EXERCISE 5-8 */
+  // 무한 Stream을 돌려주는 constrant를 구현하라.
+  def constant[A](a: A): Stream[A] = Cons(() => a, () => constant(a))
+
+  /* EXERCISE 5-9 */
+  // n에서 시작해서 n + 1, n + 2,  등으로 이어지는 무한 Stream을 생성하는 함수를 작성하라.
+  def from(n: Int): Stream[Int] = Cons(() => n, () => from(n + 1))
+
+  /* EXERCISE 5-10 */
+  // 무한 피보나치 수 0, 1, 1, 2, 3, 5, 8, ...으로 이루어진 무한 Stream 생성 함수 fibs를 구현하라.
+  def fibs: Stream[Int] = {
+    def helper(prevPrev: Int, prev: Int): Stream[Int] =
+      Cons(() => prevPrev, () => helper(prev, prevPrev + prev))
+
+    helper(0, 1)
+  }
+
+  /* EXERCISE 5-11 */
+  // 좀 더 일반화된 스트림 구축 함수 unfold를 작성하라.
+  // A 타입만으로도 동작은 가능하다 굳이 S타입이 필요한 이유는 뭘까...?
+  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
+    case Some((a, s)) => Cons(() => a, () => unfold(s)(f))
+    case _ => Empty
+  }
+
 }
 
