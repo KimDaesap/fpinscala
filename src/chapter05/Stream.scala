@@ -1,6 +1,8 @@
 package chapter05
 
 sealed trait Stream[+A] {
+  import Stream.cons
+
   // 디버깅용 출력 함수
   def print: String = this match {
     case Cons(h, t) => h().toString + ", " + t().print
@@ -22,7 +24,7 @@ sealed trait Stream[+A] {
   /* EXERCISE 5-2 */
   // take(n)과 drop(n) 함수를 작성하라.
   def take(n: Int): Stream[A] = this match {
-    case Cons(h, t) if n > 0 => Cons(h, () => t().take(n - 1))
+    case Cons(h, t) if n > 0 => cons(h(), t().take(n - 1))
     case _ => Empty
   }
 
@@ -34,7 +36,7 @@ sealed trait Stream[+A] {
   /* EXERCISE 5-3 */
   // takeWhile 함수를 작성하라.
   def takeWhile(p: A=>Boolean): Stream[A] = this match {
-    case Cons(h, t) if p(h()) => Cons(h, () => t().takeWhile(p))
+    case Cons(h, t) if p(h()) => cons(h(), t().takeWhile(p))
     case _ => Empty
   }
 
@@ -62,7 +64,7 @@ sealed trait Stream[+A] {
   /* EXERCISE 5-5 */
   // foldRight를 이용해서 takeWhile을 구현하라.
   def takeWhile2(p: A => Boolean): Stream[A] =
-    this.foldRight(Stream.empty[A])((a, acc) => if (p(a)) Cons(() => a, () => acc) else Empty)
+    this.foldRight(Stream.empty[A])((a, acc) => if (p(a)) cons(a, acc) else Empty)
 
   /* EXERCISE 5-6 */
   // foldRight를 이용해서 headOption을 구현하라.
@@ -72,15 +74,15 @@ sealed trait Stream[+A] {
   /* EXERCISE 5-7 */
   // foldRight를 이용해서 map, filter, append, flatMap을 구현하라.
   def map[B](f: A => B): Stream[B] =
-    this.foldRight(Stream.empty[B])((a, acc) => Cons(() => f(a), () => acc))
+    this.foldRight(Stream.empty[B])((a, acc) => cons(f(a), acc))
 
   def filter(p: A=>Boolean): Stream[A] =
-    this.foldRight(Stream.empty[A])((a, acc) => if (p(a)) Cons(() => a, () => acc) else acc)
+    this.foldRight(Stream.empty[A])((a, acc) => if (p(a)) cons(a, acc) else acc)
 
   // 왜 인자 b의 타입 B는 반공변으로 선언해야 동작하는가?!
   //   참고) http://www.bench87.com/content/32 (프로그래밍 스칼라 10.1.1~2)
   def append[B >: A](b: Stream[B]): Stream[B] =
-    this.foldRight(b)((a, acc) => Cons(() => a, () => acc))
+    this.foldRight(b)((a, acc) => cons(a, acc))
 
   def flatMap[B](f: A => Stream[B]): Stream[B] =
     this.foldRight(Stream.empty[B]) ((a, acc) => f(a).append(acc))
@@ -115,17 +117,19 @@ object Stream {
 
   /* EXERCISE 5-8 */
   // 무한 Stream을 돌려주는 constrant를 구현하라.
-  def constant[A](a: A): Stream[A] = Cons(() => a, () => constant(a))
+  def constant[A](a: A): Stream[A] = cons(a, constant(a))
 
   /* EXERCISE 5-9 */
   // n에서 시작해서 n + 1, n + 2,  등으로 이어지는 무한 Stream을 생성하는 함수를 작성하라.
-  def from(n: Int): Stream[Int] = Cons(() => n, () => from(n + 1))
+  def from(n: Int): Stream[Int] = cons(n, from(n + 1))
 
   /* EXERCISE 5-10 */
   // 무한 피보나치 수 0, 1, 1, 2, 3, 5, 8, ...으로 이루어진 무한 Stream 생성 함수 fibs를 구현하라.
+  // standard library를 사용한다면 다음 같은 코드가 된다.
+  //   lazy val fibs: Stream[Int] = 0 #:: 1 #:: fibs.zip(fibs.tail).map { n => n._1 + n._2 }
   def fibs: Stream[Int] = {
     def helper(prevPrev: Int, prev: Int): Stream[Int] =
-      Cons(() => prevPrev, () => helper(prev, prevPrev + prev))
+      cons(prevPrev, helper(prev, prevPrev + prev))
 
     helper(0, 1)
   }
