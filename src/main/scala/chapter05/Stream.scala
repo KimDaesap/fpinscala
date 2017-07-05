@@ -128,10 +128,10 @@ object Stream {
   // standard library를 사용한다면 다음 같은 코드가 된다.
   //   lazy val fibs: Stream[Int] = 0 #:: 1 #:: fibs.zip(fibs.tail).map { n => n._1 + n._2 }
   def fibs: Stream[Int] = {
-    def helper(prevPrev: Int, prev: Int): Stream[Int] =
-      cons(prevPrev, helper(prev, prevPrev + prev))
+    def loop(prevPrev: Int, prev: Int): Stream[Int] =
+      cons(prevPrev, loop(prev, prevPrev + prev))
 
-    helper(0, 1)
+    loop(0, 1)
   }
 
   /* EXERCISE 5-11 */
@@ -141,6 +141,26 @@ object Stream {
     case Some((a, s)) => Cons(() => a, () => unfold(s)(f))
     case _ => Empty
   }
+
+  /* EXERCISE 5-12 */
+  // unfold를 이용해서 fibs, from, constant, ones를 작성하라.
+
+  /* EXERCISE 5-13 */
+  // unfold를 이용해서 map, take, takeWhile, zipWith, zipAll을 구현하라.
+  def zipAll[B](s2: Stream[B]): Stream[(Option[A], Option[B])] = ???
+
+  /* EXERCISE 5-14 */
+  // 앞에서 작성한 함수들을 이용해서 startsWith를 구현하라.
+  def startsWith[A](s: Stream[A]): Boolean = ???
+
+  /* EXERCISE 5-15 */
+  // unfold를 이용해서 tails를 구현하라.
+  def tails: Stream[Stream[A]] ???
+
+  /* EXERCISE 5-16 */
+  // tails를 일반화한 scanRight 함수를 작성하라.
+  //   e.g) Stream(1,2,3).scanRight(0)(_ + _).toList
+  //         -> List[Int] = List(6, 5, 3, 0)
 
 }
 
