@@ -2,5 +2,5 @@
 *.iml
 
 target/
-project/
 src/test/
+project/
