@@ -1,11 +1,11 @@
 package chapter05
 
 sealed trait Stream[+A] {
-  import Stream.cons
+  import Stream._
 
   // 디버깅용 출력 함수
-  def print: String = this match {
-    case Cons(h, t) => h().toString + ", " + t().print
+  override def toString(): String = this match {
+    case Cons(h, t) => h().toString + ", " + t().toString
     case _ => "End"
   }
 
@@ -86,6 +86,59 @@ sealed trait Stream[+A] {
 
   def flatMap[B](f: A => Stream[B]): Stream[B] =
     this.foldRight(Stream.empty[B]) ((a, acc) => f(a).append(acc))
+
+  /* EXERCISE 5-13 */
+  // unfold를 이용해서 map, take, takeWhile, zipWith, zipAll을 구현하라.
+  def map_2[B](f: A => B): Stream[B] = unfold(this) {
+    case Cons(h, t) => Some(f(h()), t())
+    case _ => None
+  }
+
+  def take_2(n: Int): Stream[A] = unfold((this, n)) {
+    case (Cons(h, t), nn) if nn > 0 => Some(h(), (t(), nn - 1))
+    case _ => None
+  }
+
+  def takeWhile_3(p: A => Boolean): Stream[A] = unfold(this) {
+    case Cons(h, t) if p(h()) => Some(h(), t())
+    case _ => None
+  }
+
+  def zipWith[B, C](s: Stream[B])(f: (A, B) => C): Stream[C] = unfold((this, s)) {
+    case (Cons(ah, at), Cons(bh, bt)) => Some(f(ah(), bh()), (at(), bt()))
+    case _ => None
+  }
+
+  def zipAll[B](s: Stream[B]): Stream[(Option[A], Option[B])] = unfold((this, s)) {
+    case (Cons(ah, at), Cons(bh, bt)) => Some((Some(ah()), Some(bh())), (at(), bt()))
+    case (Cons(ah, at), Empty) => Some((Some(ah()), None), (at(), empty[B]))
+    case (Empty, Cons(bh, bt)) => Some((None, Some(bh())), (empty[A], bt()))
+    case _ => None
+  }
+
+  /* EXERCISE 5-14 */
+  // 앞에서 작성한 함수들을 이용해서 startsWith를 구현하라.
+  def startsWith[B](s: Stream[B]): Boolean =
+    zipAll(s).takeWhile(_._2.isDefined).forAll { case (h, h2) => h == h2 }
+
+  /* EXERCISE 5-15 */
+  // unfold를 이용해서 tails를 구현하라.
+  def tails: Stream[Stream[A]] = unfold(this) {
+    case s@Cons(_, t) => Some(s, t())
+    case _ => None
+  }
+
+  /* EXERCISE 5-16 */
+  // tails를 일반화한 scanRight 함수를 작성하라.
+  //   e.g) Stream(1,2,3).scanRight(0)(_ + _).toList
+  //         -> List[Int] = List(6, 5, 3, 0)
+  def scanRight[B](z: B)(f: (A, => B) => B): Stream[B] = {
+    foldRight((z, Stream(z)))((a, p0) => {
+      lazy val p1 = p0
+      val b2 = f(a, p1._1)
+      (b2, cons(b2, p1._2))
+    })._2
+  }
 }
 
 
@@ -114,6 +167,9 @@ object Stream {
     if (as.isEmpty) empty
     else cons(as.head, apply(as.tail: _*))
   }
+
+  // page 93
+  def ones: Stream[Int] = cons(1, ones)
 
   /* EXERCISE 5-8 */
   // 무한 Stream을 돌려주는 constrant를 구현하라.
@@ -144,23 +200,12 @@ object Stream {
 
   /* EXERCISE 5-12 */
   // unfold를 이용해서 fibs, from, constant, ones를 작성하라.
+  def fibs_2: Stream[Int] = unfold((0, 1)) { case (a, b) => Some(a, (b, a + b)) }
 
-  /* EXERCISE 5-13 */
-  // unfold를 이용해서 map, take, takeWhile, zipWith, zipAll을 구현하라.
-  def zipAll[B](s2: Stream[B]): Stream[(Option[A], Option[B])] = ???
+  def from_2(n: Int): Stream[Int] = unfold(n)(s => Some(s, s + 1))
 
-  /* EXERCISE 5-14 */
-  // 앞에서 작성한 함수들을 이용해서 startsWith를 구현하라.
-  def startsWith[A](s: Stream[A]): Boolean = ???
+  def constant_2[A](a: A): Stream[A] = unfold(a)(s => Some(s, s))
 
-  /* EXERCISE 5-15 */
-  // unfold를 이용해서 tails를 구현하라.
-  def tails: Stream[Stream[A]] ???
-
-  /* EXERCISE 5-16 */
-  // tails를 일반화한 scanRight 함수를 작성하라.
-  //   e.g) Stream(1,2,3).scanRight(0)(_ + _).toList
-  //         -> List[Int] = List(6, 5, 3, 0)
-
+  def ones_2: Stream[Int] = unfold(1)(_ => Some(1,1))
 }
 

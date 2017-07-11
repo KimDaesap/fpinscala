@@ -1,4 +1,6 @@
-.idea
+.idea/
 *.iml
-*.class
-*.log
+
+target/
+project/
+src/test/
