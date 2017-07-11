@@ -1,6 +1,4 @@
 .idea/
 *.iml
+project/target/
 
-target/
-src/test/
-project/
