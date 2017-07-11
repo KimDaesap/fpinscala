@@ -117,6 +117,7 @@ sealed trait Stream[+A] {
   }
 
   /* EXERCISE 5-14 */
+  // todo: 다시 풀어 봅시다!
   // 앞에서 작성한 함수들을 이용해서 startsWith를 구현하라.
   def startsWith[B](s: Stream[B]): Boolean =
     zipAll(s).takeWhile(_._2.isDefined).forAll { case (h, h2) => h == h2 }
@@ -129,6 +130,7 @@ sealed trait Stream[+A] {
   }
 
   /* EXERCISE 5-16 */
+  // todo: 다시 풀어 봅시다!
   // tails를 일반화한 scanRight 함수를 작성하라.
   //   e.g) Stream(1,2,3).scanRight(0)(_ + _).toList
   //         -> List[Int] = List(6, 5, 3, 0)
