@@ -19,7 +19,7 @@ trait RNG {
   /* EXERCISE 6-4 */
   def ints(count: Int)(rng: RNG): (List[Int], RNG) = ???
 
-    // page 106~197
+  // page 196~197
   type Rand[+A] = RNG => (A, RNG)
 
   def unit[A](a: A): Rand[A] = rng => (a, rng)
