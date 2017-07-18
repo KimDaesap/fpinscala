@@ -4,20 +4,46 @@ trait RNG {
   def nextInt: (Int, RNG)
 
   /* EXERCISE 6-1 */
-  def nonNegativeInt(rng: RNG): (Int, RNG) = ???
+  def nonNegativeInt(rng: RNG): (Int, RNG) = {
+    val (n, r) = nextInt
+    (if (n < 0) -n else n, r)
+  }
 
   /* EXERCISE 6-2 */
-  def double(rng: RNG): (Double, RNG) = ???
+  // Double의 표현 값의 범위가 Int보다 크기 때문에 +1을 해도 음수가 되지 않는다.
+  def double(rng: RNG): (Double, RNG) = {
+    val (n, r) = nonNegativeInt(rng)
+    (n / (Int.MaxValue.toDouble + 1), r)
+  }
 
   /* EXERCISE 6-3 */
-  def intDouble(rng: RNG): ((Int, Double), RNG) = ???
+  def intDouble(rng: RNG): ((Int, Double), RNG) = {
+    val (n1, r1) = rng.nextInt
+    val (n2, r2) = double(r1)
+    ((n1, n2), r2)
+  }
 
-  def doubleInt(rng: RNG): ((Double, Int), RNG) = ???
+  def doubleInt(rng: RNG): ((Double, Int), RNG) = {
+    val ((n, d), r) = intDouble(rng)
+    ((d, n), r)
+  }
 
-  def double3(rng: RNG): ((Double, Double, Double), RNG) = ???
+  def double3(rng: RNG): ((Double, Double, Double), RNG) = {
+    val (d1, r1) = double(rng)
+    val (d2, r2) = double(r1)
+    val (d3, r3) = double(r2)
+    ((d1, d2, d3), r3)
+  }
 
   /* EXERCISE 6-4 */
-  def ints(count: Int)(rng: RNG): (List[Int], RNG) = ???
+  def ints(count: Int)(rng: RNG): (List[Int], RNG) = {
+    if (count <= 0) (Nil, rng)
+    else {
+      val (n, r1) = rng.nextInt
+      val (ns, r2) = ints(count -1)(r1)
+      (n :: ns, r2)
+    }
+  }
 
   // page 196~197
   type Rand[+A] = RNG => (A, RNG)
@@ -30,9 +56,42 @@ trait RNG {
       (f(a), rng2)
     }
 
+  // map의 사용 예
+  def nonNegativeEven: Rand[Int] = map(nonNegativeInt)(i => i - i % 2)
+
   /* EXERCISE 6-5 */
   // 연습문제 6-2의 double을 map을 이용해서 좀 더 우아한 방식으로 구현하라.
-  
+  def double_2(rng: RNG): Rand[Double] = {
+    map(nonNegativeInt)(_ / (Int.MaxValue.toDouble + 1))
+  }
+
+  /* EXERCISE 6-6 */
+  def map2[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = {
+    rng => {
+      val (a, r1) = ra(rng)
+      val (b, r2) = rb(r1)
+      (f(a, b), r2)
+    }
+  }
+
+  /* EXERCISE 6-7 */
+  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = {
+    ???
+  }
+
+  def ints_2(count: Int)(rng: RNG): (List[Int], RNG) = {
+    ???
+  }
+
+  /* EXERCISE 6-8 */
+
+  /* EXERCISE 6-9 */
+
+  /* EXERCISE 6-10 */
+
+  /* EXERCISE 6-11 */
+
+
 
 
 }
