@@ -48,6 +48,8 @@ trait RNG {
   // page 196~197
   type Rand[+A] = RNG => (A, RNG)
 
+  val int: Rand[Int] = _.nextInt
+
   def unit[A](a: A): Rand[A] = rng => (a, rng)
 
   def map[A, B](s: Rand[A])(f: A => B): Rand[B] =
@@ -75,12 +77,16 @@ trait RNG {
   }
 
   /* EXERCISE 6-7 */
+  // todo: 다시 풀어보기, 어렵다.
+  // unit을 안쓰고 람다식을 직접 쓰면 안되는데 이유를 모르겠다 =_=;
+  // acc도 List[A]() 말고 Nil[A]를 쓰면 안되는데 왜 그럴까 =_=;
   def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = {
-    ???
+    fs.foldRight(unit(List[A]()))((f, acc) => map2(f, acc)(_ :: _))
   }
 
-  def ints_2(count: Int)(rng: RNG): (List[Int], RNG) = {
-    ???
+  // todo: 이것도 다시 =_=;
+  def ints_2(count: Int)(rng: RNG):  Rand[List[Int]] = {
+    sequence(List.fill(count)(int))
   }
 
   /* EXERCISE 6-8 */
