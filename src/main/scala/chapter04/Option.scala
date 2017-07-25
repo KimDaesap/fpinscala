@@ -7,12 +7,12 @@ sealed trait Option[+A] {
   // map과 flatMap는 함수 인자의 리턴 타입이 값인지 Option 인지가 다르며,
   // map은 리턴을 Some으로 감싸지만 flatMap은 옵션을 벗기는 차이가 있다.
   def map[B](f: A => B): Option[B] = this match {
-    case None => None
+    case None    => None
     case Some(v) => Some(f(v))
   }
 
   def flatMap[B](f: A => Option[B]): Option[B] = this match {
-    case None => None
+    case None    => None
     case Some(v) => f(v)
   }
 
@@ -22,25 +22,23 @@ sealed trait Option[+A] {
    *   함수에서 실제로 쓰이기 전까지 평가하지 않는 다는 의미.
    */
   def getOrElse[B >: A](default: => B): B = this match {
-    case None => default
+    case None    => default
     case Some(v) => v
   }
 
   def orElse[B >: A](ob: => Option[B]): Option[B] = this match {
-    case None => ob
+    case None    => ob
     case Some(_) => this
   }
 
   def filter(f: A => Boolean): Option[A] = this match {
     case Some(v) if f(v) => this
-    case _ => None
+    case _               => None
   }
 }
 
-
 case class Some[+A](get: A) extends Option[A]
 case object None extends Option[Nothing]
-
 
 object Option {
   /* EXERCISE 4-2 */
@@ -64,16 +62,16 @@ object Option {
   // page 70.
   // lift(math.abs) -> 인자 Option[A]를 받고 Option[B]를 리턴하는 함수 생성.
   // _ map f -> _는 Option[A]를 가르키고 map 메서드를 사용해서 승급.
-  def lift[A,B](f: A => B): Option[A] => Option[B] = _ map f
+  def lift[A, B](f: A => B): Option[A] => Option[B] = _ map f
 
   // page 72.
   // a(lazy)를 평가해서 Option으로 리턴, 예외가 발생하면 None을 리턴.
   def Try[A](a: => A): Option[A] =
     try Some(a)
-    catch { case e: Exception => None}
+    catch { case e: Exception => None }
 
   /* EXERCISE 4-3 */
-  def map2[A,B,C](a: Option[A], b: Option[B])(f: (A,B) => C): Option[C] = {
+  def map2[A, B, C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = {
     a.flatMap(aa => b.map(bb => f(aa, bb)))
   }
 
@@ -87,7 +85,7 @@ object Option {
   // 좀 더 알기 쉽게 이해할 수 있는 방법을 생각해 봅시다.
   def sequence[A](a: List[Option[A]]): Option[List[A]] = {
     a match {
-      case Nil => Some(Nil)
+      case Nil    => Some(Nil)
       case h :: t => h.flatMap(v => sequence(t).map(v :: _))
     }
   }
@@ -103,9 +101,9 @@ object Option {
   // 목록 a를 한 번만 훑는 구현을 할 것!
   // 위에서 구현한 map2를 사용하면 다음과 같다.
   //   case h::t => map2(f(h), traverse(t)(f))(_ :: _)
-  def traverse[A,B](a: List[A])(f: A => Option[B]): Option[List[B]] = {
+  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = {
     a match {
-      case Nil => Some(Nil)
+      case Nil    => Some(Nil)
       case h :: t => f(h).flatMap(v => traverse(t)(f).map(v :: _))
     }
   }

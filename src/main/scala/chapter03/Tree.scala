@@ -11,26 +11,26 @@ object Tree {
 
   /* EXERCISE 3-25 */
   def size[A](tr: Tree[A]): Int = tr match {
-    case Leaf(_) => 1
+    case Leaf(_)      => 1
     case Branch(l, r) => size(l) + size(r)
   }
 
   /* EXERCISE 3-26 */
   def maximum(tr: Tree[Int]): Int = tr match {
-    case Leaf(v) => v
+    case Leaf(v)      => v
     case Branch(l, r) => maximum(l) max maximum(r)
   }
 
   /* EXERCISE 3-27 */
   def depth[A](tr: Tree[A]): Int = tr match {
-    case Leaf(_) => 0
+    case Leaf(_)      => 0
     case Branch(l, r) => 1 + depth(l) max depth(r)
   }
 
   /* EXERCISE 3-28 */
   def map[A, B](tr: Tree[A])(f: A => B): Tree[B] = {
     tr match {
-      case Leaf(v) => Leaf(f(v))
+      case Leaf(v)      => Leaf(f(v))
       case Branch(l, r) => Branch(map(l)(f), map(r)(f))
     }
   }
@@ -39,7 +39,7 @@ object Tree {
   // 생각중...
   def fold[A, B](tr: Tree[A])(f: A => B)(g: (B, B) => B): B = {
     tr match {
-      case Leaf(v) => f(v)
+      case Leaf(v)      => f(v)
       case Branch(l, r) => g(fold(l)(f)(g), fold(r)(f)(g))
     }
   }

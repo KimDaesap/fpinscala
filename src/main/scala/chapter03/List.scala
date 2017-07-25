@@ -110,10 +110,11 @@ object List {
     List(3), 0 + 1 + 2
     0 + 1 + 2 + 3 = 6
    */
-  def foldLeft[A, B](as: List[A], acc: B)(f: (B, A) => B): B = as match {
-    case Nil => acc
-    case Cons(h, t) => foldLeft(t, f(acc, h))(f)
-  }
+  def foldLeft[A, B](as: List[A], acc: B)(f: (B, A) => B): B =
+    as match {
+      case Nil => acc
+      case Cons(h, t) => foldLeft(t, f(acc, h))(f)
+    }
 
   /* EXERCISE 3-11 */
   def sum3(as: List[Int]): Int =

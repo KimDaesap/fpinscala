@@ -10,7 +10,7 @@ trait RNG {
   }
 
   /* EXERCISE 6-2 */
-  // Double의 표현 값의 범위가 Int보다 크기 때문에 +1을 해도 음수가 되지 않는다.
+  // Double의 표현 값의 범위가 Int보다 크기 때문에 MaxValue + 1을 해도 문제가 되지 않는다.
   def double(rng: RNG): (Double, RNG) = {
     val (n, r) = nonNegativeInt(rng)
     (n / (Int.MaxValue.toDouble + 1), r)
@@ -76,6 +76,10 @@ trait RNG {
     }
   }
 
+  // page 108.
+  def both[A,B](ra: Rand[A], rb: Rand[B]): Rand[(A,B)] =
+    map2(ra, rb)((_, _))
+
   /* EXERCISE 6-7 */
   // todo: 다시 풀어보기, 어렵다.
   // unit을 안쓰고 람다식을 직접 쓰면 안되는데 이유를 모르겠다 =_=;
@@ -90,17 +94,33 @@ trait RNG {
   }
 
   /* EXERCISE 6-8 */
+  // flatMap을 구현하고 그것을 이용해서 nonNegativeLessThan을 구현하라.
+  // todo: 생각해봅시다!
+  def flatMap[A,B](f: Rand[A])(g: A => Rand[B]): Rand[B] =
+    rng => {
+      val (a, r1) = f(rng)
+      g(a)(r1)
+    }
+
+  def nonNegativeLessThan(n: Int): Rand[Int] =
+    flatMap(nonNegativeInt) { i =>
+      val mod = i % n
+      if (i + (n-1) - mod >= 0) unit(mod) else nonNegativeLessThan(n)
+    }
 
   /* EXERCISE 6-9 */
+  // map과 map2를 flatMap을 이용해서 다시 구현하라.
+  // todo: 생각해봅시다!
+  def map_2[A, B](s: Rand[A])(f: A => B): Rand[B] = {
+    flatMap(s)(a => unit(f(a)))
+  }
 
-  /* EXERCISE 6-10 */
-
-  /* EXERCISE 6-11 */
-
-
-
+  def map2_2[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = {
+    flatMap(ra)(a => map(rb)(b => f(a, b)))
+  }
 
 }
+
 
 case class SimpleRNG(seed: Long) extends RNG {
   def nextInt: (Int, RNG) = {

@@ -5,27 +5,25 @@ sealed trait Either[+E, +A] {
   // Right 값에 대해 작용하는 버전의 map, flatMap, orElse, map2, Either를 구현하라.
   def map[B](f: A => B): Either[E, B] = this match {
     case Right(a) => Right(f(a))
-    case Left(e) => Left(e)
+    case Left(e)  => Left(e)
   }
 
-  def flatMap[EE >: E,B](f: A => Either[EE, B]): Either[EE, B] = this match {
+  def flatMap[EE >: E, B](f: A => Either[EE, B]): Either[EE, B] = this match {
     case Right(a) => f(a)
-    case Left(e) => Left(e)
+    case Left(e)  => Left(e)
   }
 
   def orElse[EE >: E, B >: A](b: Either[EE, B]): Either[EE, B] = this match {
     case Right(_) => this
-    case _ => b
+    case _        => b
   }
 
   def map2[EE >: E, B, C](b: Either[EE, B])(f: (A, B) => C): Either[EE, C] =
-    this.flatMap(aa => b.map(bb => f(aa,bb)))
+    this.flatMap(aa => b.map(bb => f(aa, bb)))
 }
 
-
 case class Left[+E](value: E) extends Either[E, Nothing]
-case class Right[+A](value: A) extends  Either[Nothing, A]
-
+case class Right[+A](value: A) extends Either[Nothing, A]
 
 object Either {
   /* EXERCISE 4-7 */
@@ -33,7 +31,7 @@ object Either {
   // 이 두 함수는 발생한 첫 오류를 돌려주어야 한다 (오류가 발생했다면)
   def traverse[E, A, B](as: List[A])(f: A => Either[E, B]): Either[E, List[B]] = {
     as match {
-      case Nil => Right(Nil)
+      case Nil    => Right(Nil)
       case h :: t => f(h).flatMap(a => traverse(t)(f).map(a :: _))
     }
   }
@@ -70,16 +68,17 @@ object Either {
   // 그러한 자료 형식에 대해 orElse, tarverse, sequence는 다르게 행동할까?
 
   // 1. map2를 바꿔보자... 구리다.
-  def map2[E, A, B, C](a: Either[E, A], b: Either[E, B])
-                      (f: (A, B) => C): Either[List[E], C] = {
+  def map2[E, A, B, C](a: Either[E, A], b: Either[E, B])(
+      f: (A, B) => C): Either[List[E], C] = {
     (a, b) match {
       case (Right(aa), Right(bb)) => Right(f(aa, bb))
-      case (a1, a2) => Left(List(a1, a2).foldLeft(List[E]()) {
-        (acc, x) => x match {
-          case Left(e) => e :: acc
-          case _ => acc
-        }
-      })
+      case (a1, a2) =>
+        Left(List(a1, a2).foldLeft(List[E]()) { (acc, x) =>
+          x match {
+            case Left(e) => e :: acc
+            case _       => acc
+          }
+        })
     }
   }
 
@@ -91,4 +90,3 @@ object Either {
 
 // 3. Either보다 더 잘 만족하는 새로운 자료형식을 만들어 보자.
 // Todo....
-
