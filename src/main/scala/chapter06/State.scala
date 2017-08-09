@@ -33,6 +33,7 @@ object State {
   }
 
   // page 114.
+  // todo: 이게 뭔소리여 -_-;
   def modify[S](f: S => S): State[S, Unit] =
     for {
       s <- get
