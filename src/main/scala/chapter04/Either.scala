@@ -1,4 +1,4 @@
-package chapter04
+package fpinscala.errorhandling
 
 sealed trait Either[+E, +A] {
   /* EXERCISE 4-6 */

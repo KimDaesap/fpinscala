@@ -28,6 +28,7 @@ object Monoid {
     val zero = Nil
   }
 
+
   // EXERCISE 10-1
   val intAddition: Monoid[Int] = new Monoid[Int] {
     def op(a1: Int, a2: Int): Int = a1 + a2
@@ -49,17 +50,20 @@ object Monoid {
     def zero: Boolean = true
   }
 
+
   // EXERCISE 10-2
   def optionMonoid[A]: Monoid[Option[A]] = new Monoid[Option[A]] {
     override def op(a1: Option[A], a2: Option[A]): Option[A] = a1.orElse(a2)
     override def zero: Option[A] = None
   }
 
+
   // EXERCISE 10-3
   def endoMonoid[A]: Monoid[A => A] = new Monoid[A => A] {
     def op(a1: A=>A, a2: A=>A): A=>A = a1 compose a2
     def zero: A=>A = (a: A) => a
   }
+
 
   // EXERCISE 10-4
   // 이전에 작성한 Gen과 Prop 사용.
@@ -78,19 +82,33 @@ object Monoid {
       forAll(gen)((a: A) =>
         m.op(a, m.zero) == a && m.op(m.zero, a) == a)
 
-  def trimMonoid(s: String): Monoid[String] = ???
 
   // page 230.
   // Monoid를 이용한 접기.
-  def concatenate[A](as: List[A], m: Monoid[A]): A = as.foldLeft(m.zero)(m.op)
+  def concatenate[A](as: List[A], m: Monoid[A]): A =
+    as.foldLeft(m.zero)(m.op)
 
-  // EXERCISE 10-4
-  def foldMap[A, B](as: List[A], m: Monoid[B])(f: A => B): B = ???
 
-  def foldRight[A, B](as: List[A])(z: B)(f: (A, B) => B): B = ???
+  // EXERCISE 10-5
+  def foldMap[A, B](as: List[A], m: Monoid[B])(f: A => B): B =
+    as.foldLeft(m.zero)((b, a) => m.op(b, f(a)))
 
-  def foldLeft[A, B](as: List[A])(z: B)(f: (B, A) => B): B = ???
 
+  // EXERCISE 10-6
+  def foldRight[A, B](as: List[A])(z: B)(f: (A, B) => B): B =
+    foldMap(as, endoMonoid[B])(f.curried)(z)
+
+  // We can get the dual of any monoid just by flipping the `op`.
+  def dual[A](m: Monoid[A]): Monoid[A] = new Monoid[A] {
+    def op(x: A, y: A): A = m.op(y, x)
+    val zero = m.zero
+  }
+
+  def foldLeft[A, B](as: List[A])(z: B)(f: (B, A) => B): B =
+    foldMap(as, dual(endoMonoid[B]))(a => b => f(b, a))(z)
+
+
+  // EXERCISE 10-7
   def foldMapV[A, B](as: IndexedSeq[A], m: Monoid[B])(f: A => B): B = ???
 
   def ordered(ints: IndexedSeq[Int]): Boolean = ???

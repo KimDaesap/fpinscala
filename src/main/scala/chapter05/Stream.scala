@@ -1,4 +1,4 @@
-package chapter05
+package fpinscala.laziness
 
 sealed trait Stream[+A] {
   import Stream._

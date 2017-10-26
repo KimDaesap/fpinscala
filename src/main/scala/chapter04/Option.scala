@@ -1,4 +1,4 @@
-package chapter04
+package fpinscala.errorhandling
 
 /* EXERCISE 4-1 */
 // Option의 모든 함수들을 구현하라
