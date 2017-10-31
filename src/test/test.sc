@@ -9,3 +9,5 @@ def endoMonoid[A]: Monoid[A => A] = new Monoid[A => A] {
 }
 
 endoMonoid[Int]
+
+List(1,2,3,4,5).splitAt(2)

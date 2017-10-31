@@ -28,7 +28,6 @@ object Monoid {
     val zero = Nil
   }
 
-
   // EXERCISE 10-1
   val intAddition: Monoid[Int] = new Monoid[Int] {
     def op(a1: Int, a2: Int): Int = a1 + a2
@@ -50,20 +49,17 @@ object Monoid {
     def zero: Boolean = true
   }
 
-
   // EXERCISE 10-2
   def optionMonoid[A]: Monoid[Option[A]] = new Monoid[Option[A]] {
-    override def op(a1: Option[A], a2: Option[A]): Option[A] = a1.orElse(a2)
-    override def zero: Option[A] = None
+    def op(a1: Option[A], a2: Option[A]): Option[A] = a1.orElse(a2)
+    def zero: Option[A] = None
   }
-
 
   // EXERCISE 10-3
   def endoMonoid[A]: Monoid[A => A] = new Monoid[A => A] {
-    def op(a1: A=>A, a2: A=>A): A=>A = a1 compose a2
-    def zero: A=>A = (a: A) => a
+    def op(a1: A => A, a2: A => A): A => A = a1 compose a2
+    def zero: A => A = (a: A) => a
   }
-
 
   // EXERCISE 10-4
   // 이전에 작성한 Gen과 Prop 사용.
@@ -79,20 +75,16 @@ object Monoid {
     } yield (x, y, z))(p =>
       m.op(p._1, m.op(p._2, p._3)) == m.op(m.op(p._1, p._2), p._3)) &&
       // Identity
-      forAll(gen)((a: A) =>
-        m.op(a, m.zero) == a && m.op(m.zero, a) == a)
-
+      forAll(gen)((a: A) => m.op(a, m.zero) == a && m.op(m.zero, a) == a)
 
   // page 230.
   // Monoid를 이용한 접기.
   def concatenate[A](as: List[A], m: Monoid[A]): A =
     as.foldLeft(m.zero)(m.op)
 
-
   // EXERCISE 10-5
   def foldMap[A, B](as: List[A], m: Monoid[B])(f: A => B): B =
     as.foldLeft(m.zero)((b, a) => m.op(b, f(a)))
-
 
   // EXERCISE 10-6
   def foldRight[A, B](as: List[A])(z: B)(f: (A, B) => B): B =
@@ -107,21 +99,52 @@ object Monoid {
   def foldLeft[A, B](as: List[A])(z: B)(f: (B, A) => B): B =
     foldMap(as, dual(endoMonoid[B]))(a => b => f(b, a))(z)
 
-
   // EXERCISE 10-7
-  def foldMapV[A, B](as: IndexedSeq[A], m: Monoid[B])(f: A => B): B = ???
+  def foldMapV[A, B](as: IndexedSeq[A], m: Monoid[B])(f: A => B): B = {
+    if (as.length == 0)
+      m.zero
+    else if (as.length == 1)
+      f(as(0))
+    else {
+      val (l, r) = as.splitAt(as.length / 2)
+      m.op(foldMapV(l, m)(f), foldMapV(r, m)(f))
+    }
+  }
 
-  def ordered(ints: IndexedSeq[Int]): Boolean = ???
+  // EXERCISE 10-8
+  def par[A](m: Monoid[A]): Monoid[Par[A]] = new Monoid[Par[A]] {
+    def op(a1: Par[A], a2: Par[A]): Par[A] = a1.map2(a2)(m.op)
+    def zero: Par[A] = Par.unit(m.zero)
+  }
 
+  def parFoldMap[A, B](v: IndexedSeq[A], m: Monoid[B])(f: A => B): Par[B] =
+    Par.parMap(v)(f).flatMap { bs =>
+      foldMapV(bs, par(m))(b => Par.lazyUnit(b))
+    }
+
+
+  // EXERCISE 10-9
+  def ordered(ints: IndexedSeq[Int]): Boolean = {
+    val mon = new Monoid[Option[(Int, Int, Boolean)]] {
+      def op(o1: Option[(Int, Int, Boolean)], o2: Option[(Int, Int, Boolean)]) =
+        (o1, o2) match {
+          case (Some((x1, y1, p)), Some((x2, y2, q))) =>
+            Some((x1 min x2, y1 max y2, p && q && y1 <= x2))
+          case (x, None) => x
+          case (None, x) => x
+        }
+
+      val zero = None
+    }
+
+    foldMapV(ints, mon)(i => Some((i, i, true))).map(_._3).getOrElse(true)
+  }
+
+
+  // page 233.
   sealed trait WC
   case class Stub(chars: String) extends WC
   case class Part(lStub: String, words: Int, rStub: String) extends WC
-
-  def par[A](m: Monoid[A]): Monoid[Par[A]] =
-    ???
-
-  def parFoldMap[A, B](v: IndexedSeq[A], m: Monoid[B])(f: A => B): Par[B] =
-    ???
 
   val wcMonoid: Monoid[WC] = ???
 
