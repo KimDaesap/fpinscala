@@ -99,6 +99,7 @@ object Monoid {
   def foldLeft[A, B](as: List[A])(z: B)(f: (B, A) => B): B =
     foldMap(as, dual(endoMonoid[B]))(a => b => f(b, a))(z)
 
+
   // EXERCISE 10-7
   def foldMapV[A, B](as: IndexedSeq[A], m: Monoid[B])(f: A => B): B = {
     if (as.length == 0)
@@ -165,40 +166,38 @@ object Monoid {
   }
 
 
-  def count(s: String): Int = ???
+  // EXERCISE 10-11
+  def count(s: String): Int = {
+    def wc(c: Char): WC =
+      if (c.isWhitespace) Part("", 0, "") else Stub(c.toString)
 
-  def productMonoid[A, B](A: Monoid[A], B: Monoid[B]): Monoid[(A, B)] =
-    ???
+    def unstub(s: String): Int = s.length min 1
 
-  def functionMonoid[A, B](B: Monoid[B]): Monoid[A => B] =
-    ???
-
-  def mapMergeMonoid[K, V](V: Monoid[V]): Monoid[Map[K, V]] =
-    ???
-
-  def bag[A](as: IndexedSeq[A]): Map[A, Int] =
-    ???
+    foldMapV(s.toIndexedSeq, wcMonoid)(wc) match {
+      case Stub(s) => unstub(s)
+      case Part(l, w, r) => unstub(l) + w + unstub(r)
+    }
+  }
 }
 
+
+// page 235
 trait Foldable[F[_]] {
   import Monoid._
 
-  def foldRight[A, B](as: F[A])(z: B)(f: (A, B) => B): B =
-    ???
+  def foldRight[A, B](as: F[A])(z: B)(f: (A, B) => B): B = ???
 
-  def foldLeft[A, B](as: F[A])(z: B)(f: (B, A) => B): B =
-    ???
+  def foldLeft[A, B](as: F[A])(z: B)(f: (B, A) => B): B = ???
 
-  def foldMap[A, B](as: F[A])(f: A => B)(mb: Monoid[B]): B =
-    ???
+  def foldMap[A, B](as: F[A])(f: A => B)(mb: Monoid[B]): B = ???
 
-  def concatenate[A](as: F[A])(m: Monoid[A]): A =
-    ???
+  def concatenate[A](as: F[A])(m: Monoid[A]): A = ???
 
-  def toList[A](as: F[A]): List[A] =
-    ???
+  def toList[A](as: F[A]): List[A] = ???
 }
 
+
+// EXERCISE 10-12
 object ListFoldable extends Foldable[List] {
   override def foldRight[A, B](as: List[A])(z: B)(f: (A, B) => B) =
     ???
@@ -224,6 +223,8 @@ object StreamFoldable extends Foldable[Stream] {
     ???
 }
 
+
+// EXERCISE 10-13
 sealed trait Tree[+A]
 case class Leaf[A](value: A) extends Tree[A]
 case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
@@ -237,6 +238,8 @@ object TreeFoldable extends Foldable[Tree] {
     ???
 }
 
+
+// EXERCISE 10-14
 object OptionFoldable extends Foldable[Option] {
   override def foldMap[A, B](as: Option[A])(f: A => B)(mb: Monoid[B]): B =
     ???
