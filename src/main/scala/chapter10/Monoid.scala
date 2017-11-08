@@ -178,6 +178,24 @@ object Monoid {
       case Part(l, w, r) => unstub(l) + w + unstub(r)
     }
   }
+
+
+  // EXERCISE 10-16
+  def productMonoid[A, B](A: Monoid[A], B: Monoid[B]): Monoid[(A, B)] =
+    ???
+
+
+  // EXERCISE 10-17
+  def functionMonoid[A, B](B: Monoid[B]): Monoid[A => B] =
+    ???
+
+  def mapMergeMonoid[K, V](V: Monoid[V]): Monoid[Map[K, V]] =
+    ???
+
+
+  // EXERCISE 10-18
+  def bag[A](as: IndexedSeq[A]): Map[A, Int] =
+    ???
 }
 
 
@@ -193,6 +211,7 @@ trait Foldable[F[_]] {
 
   def concatenate[A](as: F[A])(m: Monoid[A]): A = ???
 
+  // EXERCISE 10-15
   def toList[A](as: F[A]): List[A] = ???
 }
 
@@ -248,3 +267,5 @@ object OptionFoldable extends Foldable[Option] {
   override def foldRight[A, B](as: Option[A])(z: B)(f: (A, B) => B) =
     ???
 }
+
+
