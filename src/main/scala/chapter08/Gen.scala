@@ -1,4 +1,5 @@
-package fpinscala.testing
+package fpinscala
+package testing
 
 import fpinscala.laziness.Stream
 import fpinscala.state._

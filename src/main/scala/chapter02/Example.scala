@@ -1,4 +1,5 @@
-package fpinscala.gettingstarted
+package fpinscala
+package gettingstarted
 
 object Example {
 

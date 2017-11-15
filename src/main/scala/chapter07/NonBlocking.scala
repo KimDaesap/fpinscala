@@ -1,4 +1,5 @@
-package fpinscala.parallelism
+package fpinscala
+package parallelism
 
 import java.util.concurrent.{Callable, CountDownLatch, ExecutorService}
 import java.util.concurrent.atomic.AtomicReference

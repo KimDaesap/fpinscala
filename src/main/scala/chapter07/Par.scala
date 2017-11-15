@@ -1,4 +1,5 @@
-package fpinscala.parallelism
+package fpinscala
+package parallelism
 
 import java.util.concurrent._
 import language.implicitConversions

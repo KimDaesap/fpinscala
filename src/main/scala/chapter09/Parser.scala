@@ -1,4 +1,5 @@
-package fpinscala.parsing
+package fpinscala
+package parsing
 
 import java.util.regex._
 import scala.util.matching.Regex

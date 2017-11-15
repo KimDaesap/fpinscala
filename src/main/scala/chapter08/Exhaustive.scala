@@ -1,4 +1,5 @@
-package fpinscala.testing.exhaustive
+package fpinscala
+package testing.exhaustive
 
 import language.implicitConversions
 import language.postfixOps

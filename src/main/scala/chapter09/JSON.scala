@@ -1,4 +1,5 @@
-package fpinscala.parsing
+package fpinscala
+package parsing
 
 import language.higherKinds
 import language.implicitConversions

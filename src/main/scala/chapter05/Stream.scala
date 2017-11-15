@@ -1,4 +1,5 @@
-package fpinscala.laziness
+package fpinscala
+package laziness
 
 sealed trait Stream[+A] {
   import Stream._

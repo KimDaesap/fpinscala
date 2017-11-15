@@ -1,4 +1,5 @@
-package fpinscala.datastructures
+package fpinscala
+package datastructures
 
 sealed trait Tree[+A]
 case class Leaf[A](value: A) extends Tree[A]

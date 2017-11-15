@@ -1,4 +1,5 @@
-package chapter10
+package fpinscala
+package monoids
 
 import fpinscala.parallelism.Nonblocking._
 import fpinscala.parallelism.Nonblocking.Par.toParOps // infix syntax for `Par.map`, `Par.flatMap`, etc
